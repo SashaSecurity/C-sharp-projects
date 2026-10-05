@@ -8,12 +8,14 @@ public class Game
     public int size;
     public Player cat;
     public Player mouse;
+    public Player dog;
     public GameState state;
     public StringWriter buffer;
 
     public Game() {
 
         cat=new Player("Cat");
+        dog=new Player("Dog")
         mouse = new Player("Mouse");
         state =  GameState.START;
         buffer = new StringWriter();
@@ -36,7 +38,7 @@ public class Game
         }
         buffer.WriteLine("Cat and Mouse");
         buffer.WriteLine();
-        buffer.WriteLine("Cat\tMouse\tDistance");
+        buffer.WriteLine("Cat\tMouse\tDog\tDistance");
         buffer.WriteLine("---------------------------------");
 
 
@@ -53,7 +55,7 @@ public class Game
             {
                 PrintCommand();
             }
-            else if (command == 'M' || command == 'C')
+            else if (command == 'M' || command == 'C' || command == 'D')
             {
                 if (parts.Length > 1 && int.TryParse(parts[1], out int steps))
                 {
@@ -68,19 +70,24 @@ public class Game
         buffer.WriteLine();
         buffer.WriteLine();
         buffer.WriteLine("Distance traveled:");
+        buffer.WriteLine($"Dog\t{dog.distance}")
         buffer.WriteLine($"Mouse\t{mouse.distance}");
         buffer.WriteLine($"Cat\t{cat.distance}");
         buffer.WriteLine();
 
 
-        if (mouse.state == State.Looser)
+        if(dog.state== State.Winner)
         {
-            buffer.WriteLine($"Мышь поймана на: {mouse.location}");
+            buffer.WriteLine($"Собака поймала кота на: {cat.location}");
         }
-        else
-        {
-            buffer.WriteLine("Мышь убежала от кота");
-        }
+        else if (cat.state == State.Winner)
+                {
+                    buffer.WriteLine($"Мышь поймана на: {mouse.location}");
+                }
+                else
+                {
+                    buffer.WriteLine("Мышь убежала от кота и кот убежал от собаки");
+                }
         File.WriteAllText(OutFile, buffer.ToString());
         Console.WriteLine(buffer.ToString());
 
@@ -100,27 +107,42 @@ public class Game
                     cat.Move(steps, size);
                     break;
                 }
+            case 'D':
+                {
+                    dog.Move(steps, size);
+                }
         }
                 
-                if(cat.state==State.Playing && mouse.state==State.Playing && cat.location==mouse.location) {
+                if(cat.state==State.Playing && mouse.state==State.Playing && dog.state==State.Playing && cat.location==mouse.location) {
                     cat.state = State.Winner;
                     mouse.state = State.Looser;
+                    dog.state = State.Looser;
                     state = GameState.END;
                 }
+                else if(cat.state==State.Playing && mouse.state==State.Playing && dog.state==State.Playing && dog.location == cat.location)
+        {
+                    cat.state = State.Looser;
+                    mouse.state = State.Winner;
+                    dog.state= State.Winner;
+                    state = GameState.END;
+        }
+
+
         }
 
     public void PrintCommand()
     {
+        string dogLoc = dog.state == State.NotInGame ? "??" : dog.location.ToString();
         string catLoc = cat.state == State.NotInGame ? "??" : cat.location.ToString();
         string mouseLoc = mouse.state == State.NotInGame ? "??" : mouse.location.ToString();
         string distance = GetDistance();
 
-        buffer.WriteLine($"{catLoc}\t{mouseLoc}\t{distance}");
+        buffer.WriteLine($"{catLoc}\t{mouseLoc}\t{dogLoc}\t{distance}");
     }
 
     public string GetDistance()
     {
-        if (cat.state == State.NotInGame || mouse.state == State.NotInGame)
+        if (cat.state == State.NotInGame || mouse.state == State.NotInGame || dog.state== State.NotInGame)
         {
             return "??";
         }
