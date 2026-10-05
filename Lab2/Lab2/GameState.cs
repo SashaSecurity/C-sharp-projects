@@ -1,5 +1,4 @@
-﻿enum GameState
-{
-    START,
+﻿public enum GameState
+{ START,
     END
 }
