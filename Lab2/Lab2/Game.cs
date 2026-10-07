@@ -15,7 +15,7 @@ public class Game
     public Game() {
 
         cat=new Player("Cat");
-        dog=new Player("Dog")
+        dog = new Player("Dog");
         mouse = new Player("Mouse");
         state =  GameState.START;
         buffer = new StringWriter();
@@ -70,7 +70,7 @@ public class Game
         buffer.WriteLine();
         buffer.WriteLine();
         buffer.WriteLine("Distance traveled:");
-        buffer.WriteLine($"Dog\t{dog.distance}")
+        buffer.WriteLine($"Dog\t{dog.distance}");
         buffer.WriteLine($"Mouse\t{mouse.distance}");
         buffer.WriteLine($"Cat\t{cat.distance}");
         buffer.WriteLine();
@@ -110,16 +110,17 @@ public class Game
             case 'D':
                 {
                     dog.Move(steps, size);
+                    break;
                 }
         }
                 
-                if(cat.state==State.Playing && mouse.state==State.Playing && dog.state==State.Playing && cat.location==mouse.location) {
+                if(cat.state==State.Playing && mouse.state==State.Playing && cat.location==mouse.location) {
                     cat.state = State.Winner;
                     mouse.state = State.Looser;
                     dog.state = State.Looser;
                     state = GameState.END;
                 }
-                else if(cat.state==State.Playing && mouse.state==State.Playing && dog.state==State.Playing && dog.location == cat.location)
+                else if(cat.state==State.Playing && dog.state==State.Playing && dog.location == cat.location)
         {
                     cat.state = State.Looser;
                     mouse.state = State.Winner;
@@ -142,7 +143,7 @@ public class Game
 
     public string GetDistance()
     {
-        if (cat.state == State.NotInGame || mouse.state == State.NotInGame || dog.state== State.NotInGame)
+        if (cat.state == State.NotInGame || mouse.state == State.NotInGame )
         {
             return "??";
         }
