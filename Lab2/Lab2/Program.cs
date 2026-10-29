@@ -8,7 +8,7 @@ class Program
         Game.InputFile = "1.ChaseData.txt";
         Game.OutFile = "1.Pursuit.txt";
 
-        Game game = new Game(16);
+        Game game = new Game();
         game.Run();
     }
     
