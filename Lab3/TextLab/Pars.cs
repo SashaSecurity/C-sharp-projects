@@ -29,7 +29,7 @@ namespace TextLab
                 Match match = matcher[i];
                 string tokenStr = match.Value;
 
-                if (string.IsNullOrEmpty(tokenStr)) continue;
+                if (string.IsNullOrWhiteSpace(tokenStr)) continue;
 
                 if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
                 {
