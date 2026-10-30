@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace TextLab
 {
@@ -70,7 +71,30 @@ namespace TextLab
             }
         }
 
-       
+
+        public void ExportToXml(string filePath)
+        {
+            var dto = new XmlText
+            {
+                Sentences = Sentences.Select(s => new XmlSentenceDto
+                {
+                    Words = s.Words.Select(w => w.Value).ToList()
+                }).ToList()
+            };
+
+            var serializer = new XmlSerializer(typeof(XmlText));
+            var settings = new System.Xml.XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                Indent = true
+            };
+
+            using (var writer = System.Xml.XmlWriter.Create(filePath, settings))
+            {
+                serializer.Serialize(writer, dto);
+            }
+        }
+
 
         public override string ToString()
         {
