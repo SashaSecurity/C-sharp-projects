@@ -96,6 +96,55 @@ namespace TextLab
         }
 
 
+
+
+        public List<ConcordanceItem> GetConcordance()
+        {
+            var dictionary = new Dictionary<string, ConcordanceItem>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var sentence in Sentences)
+            {
+                foreach (var word in sentence.Words)
+                {
+                    string key = word.Value.ToLowerInvariant();
+
+                    if (!dictionary.TryGetValue(key, out var item))
+                    {
+                        item = new ConcordanceItem
+                        {
+                            Word = key,
+                            Frequency = 0
+                        };
+                        dictionary[key] = item;
+                    }
+
+                    item.Frequency++;
+                    if (word.Linenumber > 0)
+                    {
+                        item.LineNumbers.Add(word.Linenumber); // SortedSet исключает дубликаты
+                    }
+                }
+            }
+
+            return dictionary.Values
+                .OrderBy(item => item.Word, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        public void PrintConcordance()
+        {
+            var concordance = GetConcordance();
+            if (!concordance.Any()) return;
+
+            int maxWordLength = concordance.Max(i => i.Word.Length);
+
+            foreach (var item in concordance)
+            {
+                Console.WriteLine(item.GetFormattedString(maxWordLength));
+            }
+        }
+
+
         public override string ToString()
         {
             return string.Join(" ", Sentences.Select(s => s.GetFormattedText()));

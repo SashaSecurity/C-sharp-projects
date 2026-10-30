@@ -21,28 +21,36 @@ namespace TextLab
             var text = new Text();
             if (string.IsNullOrEmpty(FullText)) return text;
 
-            var matcher = Regex.Matches(FullText, @"[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
+            string[] lines = FullText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var currSentence = new Sentence();
 
-            for (int i = 0; i < matcher.Count; i++)
+            for (int lineIdx = 0; lineIdx < lines.Length; lineIdx++)
             {
-                Match match = matcher[i];
-                string tokenStr = match.Value;
+                int currentLineNumber = lineIdx + 1;
 
-                if (string.IsNullOrEmpty(tokenStr)) continue;
+                var matcher = Regex.Matches(FullText, @"[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
+            
 
-                if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
+                for (int i = 0; i < matcher.Count; i++)
                 {
-                    currSentence.Tokens.Add(new Word(tokenStr));
-                }
-                else
-                {
-                    currSentence.Tokens.Add(new Punctuation(tokenStr));
+                    Match match = matcher[i];
+                    string tokenStr = match.Value;
 
-                    if (Regex.IsMatch(tokenStr, @"[.!?]"))
+                    if (string.IsNullOrWhiteSpace(tokenStr)) continue;
+
+                    if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
                     {
-                        text.Sentences.Add(currSentence);
-                        currSentence = new Sentence();
+                        currSentence.Tokens.Add(new Word(tokenStr,currentLineNumber));
+                    }
+                    else
+                    {
+                        currSentence.Tokens.Add(new Punctuation(tokenStr, currentLineNumber));
+
+                        if (Regex.IsMatch(tokenStr, @"[.!?]"))
+                        {
+                            text.Sentences.Add(currSentence);
+                            currSentence = new Sentence();
+                        }
                     }
                 }
             }

@@ -13,9 +13,15 @@ public class Program
             Console.WriteLine("Файл отсутсвует");
             return;
         }
+        if (File.Exists(inputFile))
+        {
+            File.Delete(inputFile);
+        }
         var pars = new Pars();
         Text text = pars.ReadingFile(inputFile);
         Console.WriteLine("--- Прочитанный и распарсенный текст из файла ---");
         Console.WriteLine(text);
+
+        
     }
 }
