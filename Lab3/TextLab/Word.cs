@@ -8,10 +8,14 @@ namespace TextLab
     {
         public string Value { get; set; }
 
-        public Word(string value)
+        public int LineNumber{  get; set; }
+
+        public Word(string value, int number=0)
         {
             Value = value;
+            LineNumber=number;
         }
+
 
         public override string ToString() => Value;
     }
