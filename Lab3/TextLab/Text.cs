@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace TextLab
 {
@@ -70,7 +71,77 @@ namespace TextLab
             }
         }
 
-       
+
+
+        public void ExportToXml(string filePath)
+        {
+            var dto = new XmlText
+            {
+                Sentences = Sentences.Select(s => new XmlSentence
+                {
+                    Words = s.Words.Select(w => w.Value).ToList()
+                }).ToList()
+            };
+
+            var serializer = new XmlSerializer(typeof(XmlText));
+            var settings = new System.Xml.XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                Indent = true
+            };
+
+            using (var writer = System.Xml.XmlWriter.Create(filePath, settings))
+            {
+                serializer.Serialize(writer, dto);
+            }
+        }
+
+        public List<Concordance> GetConcordance()
+        {
+            var dictionary = new Dictionary<string, Concordance>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var sentence in Sentences)
+            {
+                foreach (var word in sentence.Words)
+                {
+                    string key = word.Value.ToLowerInvariant();
+
+                    if (!dictionary.TryGetValue(key, out var item))
+                    {
+                        item = new Concordance
+                        {
+                            Word = key,
+                            Frequency = 0
+                        };
+                        dictionary[key] = item;
+                    }
+
+                    item.Frequency++;
+                    if (word.LineNumber > 0)
+                    {
+                        item.LineNumbers.Add(word.LineNumber);
+                    }
+                }
+            }
+
+            return dictionary.Values
+                .OrderBy(item => item.Word, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        public void PrintConcordance()
+        {
+            var concordance = GetConcordance();
+            if (!concordance.Any()) return;
+
+            int maxWordLength = concordance.Max(i => i.Word.Length);
+
+            foreach (var item in concordance)
+            {
+                Console.WriteLine(item.GetFormattedString(maxWordLength));
+            }
+        }
+
 
         public override string ToString()
         {
