@@ -19,38 +19,48 @@ namespace TextLab
         public Text SearchSentence(string FullText)
         {
             var text = new Text();
-            if (string.IsNullOrEmpty(FullText)) return text;
+            if (string.IsNullOrWhiteSpace(FullText)) return text;
+            string[] lines = FullText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-            var matcher = Regex.Matches(FullText, @"[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
+            
             var currSentence = new Sentence();
 
-            for (int i = 0; i < matcher.Count; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
-                Match match = matcher[i];
-                string tokenStr = match.Value;
+                int currentLineNumber = i + 1;
+                var matcher = Regex.Matches(lines[i], @"[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
 
-                if (string.IsNullOrEmpty(tokenStr)) continue;
 
-                if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
+                for (int j = 0; j < matcher.Count; j++)
                 {
-                    currSentence.Tokens.Add(new Word(tokenStr));
-                }
-                else
-                {
-                    currSentence.Tokens.Add(new Punctuation(tokenStr));
+                    int currentLineNumber = j + 1
+                    Match match = matcher[j];
+                    string tokenStr = match.Value;
 
-                    if (Regex.IsMatch(tokenStr, @"[.!?]"))
+                    if (string.IsNullOrWhiteSpace(tokenStr)) continue;
+
+                    if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
                     {
-                        text.Sentences.Add(currSentence);
-                        currSentence = new Sentence();
+                        currSentence.Tokens.Add(new Word(tokenStr, currentLineNumber));
+                    }
+                    else
+                    {
+                        currSentence.Tokens.Add(new Punctuation(tokenStr, currentLineNumber));
+
+                        if (Regex.IsMatch(tokenStr, @"[.!?]"))
+                        {
+                            text.Sentences.Add(currSentence);
+                            currSentence = new Sentence();
+                        }
                     }
                 }
             }
-            if (currSentence.Tokens.Any())
-            {
-                text.Sentences.Add(currSentence);
-            }
-            return text;
+                if (currSentence.Tokens.Any())
+                {
+                    text.Sentences.Add(currSentence);
+                }
+                return text;
+            
         }
     }
 }
