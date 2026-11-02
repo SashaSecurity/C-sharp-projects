@@ -56,7 +56,7 @@ namespace TextLab
             {
                 if (sentence.Tokens[i] is Word word && word.Value.Length == wordLength)
                 {
-                    sentence.Tokens[i] = new Word(replacement);
+                    sentence.Tokens[i] = new Word(replacement, word.LineNumber);
                 }
             }
             return true;
