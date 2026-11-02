@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -28,18 +29,18 @@ namespace TextLab
             for (int i = 0; i < lines.Length; i++)
             {
                 int currentLineNumber = i + 1;
-                var matcher = Regex.Matches(lines[i], @"[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
+                var matcher = Regex.Matches(lines[i], @"[\p{L}\p{Nd}]+(?:['’\-][\p{L}\p{Nd}]+)*|[^\s\p{L}\p{Nd}]+|\s+");
 
 
                 for (int j = 0; j < matcher.Count; j++)
                 {
-                    int currentLineNumber = j + 1
+                    int currentLine = j + 1;
                     Match match = matcher[j];
                     string tokenStr = match.Value;
 
                     if (string.IsNullOrWhiteSpace(tokenStr)) continue;
 
-                    if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:-[\p{L}\p{Nd}]+)*$"))
+                    if (Regex.IsMatch(tokenStr, @"^[\p{L}\p{Nd}]+(?:['’\-][\p{L}\p{Nd}]+)*$"))
                     {
                         currSentence.Tokens.Add(new Word(tokenStr, currentLineNumber));
                     }
