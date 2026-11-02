@@ -4,7 +4,7 @@ namespace TextLab
 {
     public class Concordance 
     {
-        public string Word { get; set; }
+        public string Word { get; set; } 
         public int Frequency { get; set; }
         public SortedSet<int> LineNumbers { get; set; } = new SortedSet<int>();
 
