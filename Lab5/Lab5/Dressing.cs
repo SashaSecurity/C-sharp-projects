@@ -4,15 +4,34 @@ using System.Text;
 
 namespace Lab5
 {
-    public abstract class Dressing:Ingredient
+    public class Dressing:Ingredient
     {
-        double FatPercentage;
+        private double volume_mil;
+        private double density;
         Type type;
 
-        public Dressing(double FatPercentage, Type type, string name, double calories_per100gramm, double weight) : base(name, calories_per100gramm, weight)
+        public Dressing(Type type, string name, double volume_mil, double density, double calories_per100gramm) : base(name, calories_per100gramm)
         {
-            FatPercentage=this.FatPercentage;
-            type = this.type;
+            this.volume_mil=volume_mil;
+            this.type= type;
+            this.density = density;
+        }
+
+        public override void AddAmount(double amount)
+
+        {
+           
+              volume_mil += amount;
+        }
+
+        public override double Getweight()
+        {
+            return (volume_mil * density);
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} {volume_mil:F1} мл";
         }
     }
 }
