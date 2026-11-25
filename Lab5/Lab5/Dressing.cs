@@ -20,8 +20,7 @@ namespace Lab5
         public override void AddAmount(double amount)
 
         {
-           
-              volume_mil += amount;
+          volume_mil += amount;
         }
 
         public override double Getweight()
@@ -31,7 +30,7 @@ namespace Lab5
 
         public override string ToString()
         {
-            return $"{base.ToString()} {volume_mil:F1} мл";
+            return $"{base.ToString()} {volume_mil:F1}";
         }
     }
 }
