@@ -5,18 +5,30 @@ using System.Text;
 
 namespace Lab5
 {
-    public abstract class Vegetables:Ingredient
+    public class Vegetables:Ingredient
     {
-       protected Category category;
+       private Category category;
+        
+        private double weight;
+        
 
-       public Vegetables(Category category, string name, double calories_per100gramm, double weight) :base(name, calories_per100gramm, weight)
+       public Vegetables(Category category, string name, double calories_per100gramm, double weight) :base(name, calories_per100gramm)
         {
             this.category = category;
+            this.weight = weight;
         }
 
-        public void printType()
+       
+        public override double Getweight()
         {
-            Console.WriteLine("Category: " + category);
+            return weight;
         }
+
+        public override void AddAmount(double amount)
+        {
+            weight += amount;
+        }
+   
+
     }
 }
